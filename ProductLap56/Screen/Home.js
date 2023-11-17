@@ -1,14 +1,35 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const ServiceDetail = ({ navigation, route }) => {
-  const id = route.params.paramKey;
-  const [service, setService] = useState('');
-  const [user, setUser] = useState('');
-
+const Home = ({ navigation }) => {
   const [data, setData] = useState(null);
+  const [serviceList, setServiceList] = useState([]);
+
+  const keyExtractor = item => item._id.toString();
+
+  const Item = ({ eachData, onPress }) => {
+    return (
+      <TouchableOpacity onPress={() => onPress(eachData)}>
+        <View style={styles.item}>
+          <View style={{ left: 10, flex: 1 }}>
+            <Text style={styles.text}>Title: {eachData.name}</Text>
+          </View>
+          <View style={{ left: 10, flex: 1, justifyContent: 'flex-end' }}>
+            <Text style={styles.text}>Price: {eachData.price}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderItem = ({ item }) => (
+    <Item
+      eachData={item}
+      onPress={() => navigation.navigate('ServiceDetail', { paramKey: item._id })}
+    />
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,7 +37,8 @@ const ServiceDetail = ({ navigation, route }) => {
         const value = await AsyncStorage.getItem('data');
         if (value !== null) {
           setData(JSON.parse(value));
-          const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
+
+          const apiURL = `https://kami-backend-5rs0.onrender.com/services/`;
           const token = JSON.parse(value).token;
 
           const axiosConfig = {
@@ -29,8 +51,7 @@ const ServiceDetail = ({ navigation, route }) => {
           axios
             .get(apiURL, axiosConfig)
             .then(response => {
-              setService(response.data);
-              setUser(response.data.user)
+              setServiceList(response.data);
             })
             .catch(error => {
               console.log('Error: ', error);
@@ -46,16 +67,16 @@ const ServiceDetail = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Service name: {service.name}</Text>
-      <Text style={styles.text}>Price: {service.price}</Text>
-      <Text style={styles.text}>Creator: {user.name}</Text>
-      <Text style={styles.text}>Time: {service.createdAt}</Text>
-      <Text style={styles.text}>Final Update: {service.updatedAt}</Text>
+      <FlatList
+        data={serviceList}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+      />
     </View>
   );
 };
 
-export default ServiceDetail;
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
@@ -76,9 +97,6 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    marginLeft: 10,
-    marginRight: 10,
-    fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
   },
