@@ -3,8 +3,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
-const UpdateService = ({ navigation }) => {
-    const [service, setService] = useState('')
+const UpdateService = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [serviceList, setServiceList] = useState([])
@@ -46,7 +45,7 @@ const UpdateService = ({ navigation }) => {
         fetchData();
     }, []);
 
-    const handleEditing = async (id, name, price) => {
+    const handleEditing = (id, name, price) => {
         const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
         const postData = { id: id._id, name: name, price: price };
 

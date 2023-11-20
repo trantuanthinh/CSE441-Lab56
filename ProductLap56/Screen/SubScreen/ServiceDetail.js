@@ -1,12 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Appbar, Button } from 'react-native-paper';
+import Menu, {
+  MenuOption,
+  MenuOptions,
+  MenuTrigger,
+  renderers,
+} from 'react-native-popup-menu';
 
 const ServiceDetail = ({ navigation, route }) => {
   const id = route.params.paramKey;
   const [service, setService] = useState('');
   const [user, setUser] = useState('');
+  const { Popover } = renderers;
 
   const [data, setData] = useState(null);
 
@@ -30,7 +38,7 @@ const ServiceDetail = ({ navigation, route }) => {
             .get(apiURL, axiosConfig)
             .then(response => {
               setService(response.data);
-              setUser(response.data.user)
+              setUser(response.data.user);
             })
             .catch(error => {
               console.log('Error: ', error);
@@ -44,8 +52,70 @@ const ServiceDetail = ({ navigation, route }) => {
     fetchData();
   }, []);
 
+  const showAlert = () => {
+    Alert.alert(
+      'Confirmation',
+      'Do you want to delete?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: handleDeleting,
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+
+  const handleDeleting = () => {
+    const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
+    const token = data.token;
+    console.log(token);
+    const axiosConfig = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    axios
+      .delete(apiURL, axiosConfig)
+      .then(response => {
+        Alert.alert('Success:');
+        console.log('Success');
+      })
+      .catch(error => {
+        Alert.alert('Failed:', error);
+        console.log('Failed:', error);
+      });
+  };
+
   return (
     <View style={styles.container}>
+      <Appbar>
+        <Appbar.BackAction onPress={navigation.goBack} />
+        <Appbar.Content title='Service Detail' />
+        <Menu renderer={Popover} rendererProps={{ placement: 'bottom' }}>
+          <MenuTrigger style={styles.menuTrigger}>
+            <Button icon="dots-vertical" />
+          </MenuTrigger>
+          <MenuOptions style={styles.menuOptions}>
+            <MenuOption onSelect={() => navigation.navigate('UpdateService')}>
+              <Text style={styles.contentText}>Update!</Text>
+            </MenuOption>
+            <MenuOption onSelect={() => showAlert()}>
+              <Text style={[styles.contentText, { color: 'red' }]}>
+                Delete!
+              </Text>
+            </MenuOption>
+          </MenuOptions>
+        </Menu>
+      </Appbar>
+
       <Text style={styles.text}>Service name: {service.name}</Text>
       <Text style={styles.text}>Price: {service.price}</Text>
       <Text style={styles.text}>Creator: {user.name}</Text>
@@ -58,6 +128,19 @@ const ServiceDetail = ({ navigation, route }) => {
 export default ServiceDetail;
 
 const styles = StyleSheet.create({
+  menuOptions: {
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+
+  menuTrigger: {
+    padding: 5,
+  },
+
+  contentText: {
+    fontSize: 18,
+  },
+
   container: {
     flex: 1,
     marginTop: 20,

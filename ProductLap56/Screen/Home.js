@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Appbar, Button } from 'react-native-paper';
 
 const Home = ({ navigation }) => {
   const [data, setData] = useState(null);
@@ -67,6 +68,16 @@ const Home = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Appbar.Header style={{ backgroundColor: 'pink' }}>
+        <Appbar.Content title="Kami" />
+        <Appbar.Action icon='account-circle' />
+      </Appbar.Header>
+      <View style={styles.header}>
+        <Text style={[styles.text, { fontSize: 30, padding: 10 }]}>
+          Danh sách
+        </Text>
+        <Button icon="plus-circle-outline" onPress={() => navigation.navigate('AddService')} />
+      </View>
       <FlatList
         data={serviceList}
         keyExtractor={keyExtractor}
@@ -82,6 +93,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 20,
+  },
+
+  header: {
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    flexDirection: 'row',
+    margin: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderRadius: 10,
   },
 
   item: {
