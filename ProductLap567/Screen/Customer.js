@@ -1,36 +1,49 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Appbar, Button } from 'react-native-paper';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Appbar, Button, IconButton } from 'react-native-paper';
 
-const Home = ({ navigation }) => {
+const Customer = ({ navigation }) => {
   const [data, setData] = useState(null);
   const [serviceList, setServiceList] = useState([]);
 
   const keyExtractor = item => item._id.toString();
 
-  const Item = ({ eachData, onPress }) => {
+  const Item = ({ eachData }) => {
     return (
-      <TouchableOpacity onPress={() => onPress(eachData)}>
-        <View style={styles.item}>
-          <View style={{ left: 10, flex: 1 }}>
-            <Text style={styles.text}>Title: {eachData.name}</Text>
-          </View>
-          <View style={{ left: 10, flex: 1, justifyContent: 'flex-end' }}>
-            <Text style={styles.text}>Price: {eachData.price}</Text>
-          </View>
+      <View
+        style={{
+          flexDirection: 'column',
+          margin: 10,
+          flexDirection: 'row',
+        }}>
+        <View style={{ left: 10, flex: 1, flexDirection: 'column' }}>
+          <Text style={styles.text}>
+            Customer: <Text style={{ color: 'black' }}>{eachData.name}</Text>
+          </Text>
+          <Text style={styles.text}>
+            Phone: <Text style={{ color: 'black' }}>{eachData.phone}</Text>
+          </Text>
+          <Text style={styles.text}>
+            Total Money:{' '}
+            <Text style={{ color: 'red' }}>{eachData.totalSpent}₫</Text>
+          </Text>
         </View>
-      </TouchableOpacity>
+        <View>
+          <Button icon="chess-king" title="Delete"></Button>
+          <Text
+            style={{
+              color: 'black',
+            }}>
+            Guest
+          </Text>
+        </View>
+      </View>
     );
   };
 
-  const renderItem = ({ item }) => (
-    <Item
-      eachData={item}
-      onPress={() => navigation.navigate('ServiceDetail', { paramKey: item._id })}
-    />
-  );
+  const renderItem = ({ item }) => <Item eachData={item} />;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +52,7 @@ const Home = ({ navigation }) => {
         if (value !== null) {
           setData(JSON.parse(value));
 
-          const apiURL = `https://kami-backend-5rs0.onrender.com/services/`;
+          const apiURL = `https://kami-backend-5rs0.onrender.com/customers`;
           const token = JSON.parse(value).token;
 
           const axiosConfig = {
@@ -69,25 +82,24 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Appbar.Header style={{ backgroundColor: 'pink' }}>
-        <Appbar.Content title="Kami" />
-        <Appbar.Action icon='account-circle' />
+        <Appbar.Content title="Customer List" />
+        <Appbar.Action icon="account-circle" />
       </Appbar.Header>
-      <View style={styles.header}>
-        <Text style={[styles.text, { fontSize: 30, padding: 10 }]}>
-          Danh sách
-        </Text>
-        <Button icon="plus-circle-outline" onPress={() => navigation.navigate('AddService')} />
-      </View>
       <FlatList
         data={serviceList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
       />
+      <IconButton
+        icon="plus-circle-outline"
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('AddCustomer')}
+      />
     </View>
   );
 };
 
-export default Home;
+export default Customer;
 
 const styles = StyleSheet.create({
   container: {
@@ -95,15 +107,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  header: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    flexDirection: 'row',
-    margin: 20,
-    justifyContent: 'flex-start',
+  floatingButton: {
+    borderWidth: 1,
+    borderColor: 'red',
     alignItems: 'center',
-    borderRadius: 10,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: '90%',
+    right: 20,
+    backgroundColor: 'rgba(255, 0, 0, 0.7)',
+    borderRadius: 100,
   },
 
   item: {
@@ -119,7 +132,6 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    color: 'black',
     fontWeight: 'bold',
   },
 });
