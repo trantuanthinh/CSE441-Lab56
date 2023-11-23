@@ -3,7 +3,7 @@ import axios from 'axios';
 import 'intl';
 import 'intl/locale-data/jsonp/vi';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { Appbar, Button } from 'react-native-paper';
 import Menu, {
   MenuOption,
@@ -15,8 +15,7 @@ import Menu, {
 const TransactionDetail = ({ navigation, route }) => {
   const id = route.params.paramKey;
   const [transaction, setTransaction] = useState('');
-  const [customer, setCustomer] = useState('');
-  const [services, setServices] = useState([]);
+  const [dateString, setDateString] = useState('');
 
   const { Popover } = renderers;
 
@@ -41,9 +40,8 @@ const TransactionDetail = ({ navigation, route }) => {
           axios
             .get(apiURL, axiosConfig)
             .then(response => {
-              setCustomer(response.data.customer);
               setTransaction(response.data);
-              setServices(response.data.services);
+              setDateString(formatDate(response.data.createdAt));
             })
             .catch(error => {
               console.log('Error: ', error);
@@ -57,46 +55,41 @@ const TransactionDetail = ({ navigation, route }) => {
     fetchData();
   }, [id]);
 
-  const showAlert = () => {
+  const showUpdatingAlert = () => {
     Alert.alert(
-      'Confirmation',
-      'Do you want to delete?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: handleDeleting,
-        },
-      ],
-      { cancelable: false },
+      'You just clicked at the update button',
+      '** There are no updating function **',
+    );
+  };
+
+  const showDeletingAlert = () => {
+    Alert.alert(
+      'You just clicked at the delete button',
+      '** There are no deleting function **',
     );
   };
 
   const handleDeleting = () => {
-    const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
-    const token = data.token;
-    console.log(token);
-    const axiosConfig = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
+    // const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
+    // const token = data.token;
+    // console.log(token);
+    // const axiosConfig = {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    // };
 
-    axios
-      .delete(apiURL, axiosConfig)
-      .then(response => {
-        Alert.alert('Success:');
-        console.log('Success');
-      })
-      .catch(error => {
-        Alert.alert('Failed:', error);
-        console.log('Failed:', error);
-      });
+    // axios
+    //   .delete(apiURL, axiosConfig)
+    //   .then(response => {
+    //     Alert.alert('Success:');
+    //     console.log('Success');
+    //   })
+    //   .catch(error => {
+    //     Alert.alert('Failed:', error);
+    //     console.log('Failed:', error);
+    //   });
   };
 
   const formatCurrencyVND = value => {
@@ -120,7 +113,7 @@ const TransactionDetail = ({ navigation, route }) => {
       minute: '2-digit',
       second: '2-digit',
     };
-    console.log(dateString);
+
     return new Intl.DateTimeFormat('en-GB', options).format(
       new Date(dateString),
     );
@@ -136,10 +129,10 @@ const TransactionDetail = ({ navigation, route }) => {
             <Button icon="dots-vertical" />
           </MenuTrigger>
           <MenuOptions style={styles.menuOptions}>
-            <MenuOption onSelect={() => navigation.navigate('UpdateService')}>
+            <MenuOption onSelect={() => showUpdatingAlert()}>
               <Text style={styles.contentText}>Update!</Text>
             </MenuOption>
-            <MenuOption onSelect={() => showAlert()}>
+            <MenuOption onSelect={() => showDeletingAlert()}>
               <Text style={[styles.contentText, { color: 'red' }]}>Delete!</Text>
             </MenuOption>
           </MenuOptions>
@@ -157,11 +150,10 @@ const TransactionDetail = ({ navigation, route }) => {
             </View>
 
             <View style={styles.innerContainer}>
-              <Text style={styles.valueText}>{transaction.id}</Text>
-              <Text style={styles.valueText}>{customer.name}</Text>
+              <Text style={styles.valueText}>{transaction?.id}</Text>
+              <Text style={styles.valueText}>{transaction?.customer?.name}</Text>
               <Text style={styles.valueText}>
-                {/* {formatDate(transaction.createdAt)} */}
-                {transaction.createdAt}
+                {dateString}
               </Text>
             </View>
           </View>
@@ -173,23 +165,23 @@ const TransactionDetail = ({ navigation, route }) => {
           <Text style={styles.title}>Services List</Text>
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.innerContainer}>
-              {services.map(service => (
-                <Text style={styles.text} key={service._id}>
-                  {service.name}
+              {transaction?.services?.map(service => (
+                <Text style={styles.text} key={service?._id}>
+                  {service?.name}
                 </Text>
               ))}
             </View>
 
             <View style={{ flex: 0.5, marginLeft: 35 }}>
-              {services.map(service => (
-                <Text key={service._id}>x{service.quantity}</Text>
+              {transaction?.services?.map(service => (
+                <Text key={service?._id}>x{service?.quantity}</Text>
               ))}
             </View>
 
             <View style={styles.innerContainer}>
-              {services.map(service => (
-                <Text style={styles.valueText} key={service._id}>
-                  {formatCurrencyVND(service.price)}
+              {transaction?.services?.map(service => (
+                <Text style={styles.valueText} key={service?._id}>
+                  {formatCurrencyVND(service?.price)}
                 </Text>
               ))}
             </View>
@@ -201,7 +193,7 @@ const TransactionDetail = ({ navigation, route }) => {
             </View>
             <View style={styles.innerContainer}>
               <Text style={styles.valueText}>
-                {formatCurrencyVND(transaction.priceBeforePromotion)}
+                {formatCurrencyVND(transaction?.priceBeforePromotion)}
               </Text>
             </View>
           </View>
@@ -225,29 +217,16 @@ const TransactionDetail = ({ navigation, route }) => {
 
             <View style={styles.innerContainer}>
               <Text style={styles.valueText}>
-                {formatCurrencyVND(transaction.priceBeforePromotion)}
+                {formatCurrencyVND(transaction?.priceBeforePromotion)}
               </Text>
-              <Text style={styles.valueText}>{formatCurrencyVND(transaction.priceBeforePromotion - transaction.price)}</Text>
+              <Text style={styles.valueText}> - {formatCurrencyVND(transaction?.priceBeforePromotion - transaction?.price)}</Text>
               <View style={{ marginTop: 25, marginLeft: 15 }}>
                 <Text
                   style={{ color: 'black', fontWeight: 'bold', fontSize: 15 }}>
-                  {formatCurrencyVND(transaction.price)}
+                  {formatCurrencyVND(transaction?.price)}
                 </Text>
               </View>
             </View>
-
-            {/* <View>
-              <View style={{ flexDirection: 'row' }}>
-                <View style={styles.innerContainer}>
-                  <Text style={styles.text}>Total</Text>
-                </View>
-                <View style={styles.innerContainer}>
-                  <Text style={styles.valueText}>
-                    {formatCurrencyVND(transaction.priceBeforePromotion)}
-                  </Text>
-                </View>
-              </View>
-            </View> */}
           </View>
         </View>
       </View>

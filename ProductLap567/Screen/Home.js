@@ -72,8 +72,7 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Appbar.Header style={{ backgroundColor: 'pink' }}>
-        {/* <Appbar.Content title={data.name} /> */}
-        <Appbar.Content title='Home' />
+        <Appbar.Content title={data?.name} />
         <Appbar.Action icon="account-circle" />
       </Appbar.Header>
       <View style={styles.header}>

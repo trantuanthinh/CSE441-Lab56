@@ -13,7 +13,6 @@ import Menu, {
 const ServiceDetail = ({ navigation, route }) => {
   const id = route.params.paramKey;
   const [service, setService] = useState('');
-  const [user, setUser] = useState('');
 
   const { Popover } = renderers;
 
@@ -39,7 +38,6 @@ const ServiceDetail = ({ navigation, route }) => {
             .get(apiURL, axiosConfig)
             .then(response => {
               setService(response.data);
-              setUser(response.data.user);
             })
             .catch(error => {
               console.log('Error: ', error);
@@ -117,11 +115,11 @@ const ServiceDetail = ({ navigation, route }) => {
         </Menu>
       </Appbar>
 
-      <Text style={styles.text}>Service name: {service.name}</Text>
-      <Text style={styles.text}>Price: {service.price}</Text>
-      <Text style={styles.text}>Creator: {user.name}</Text>
-      <Text style={styles.text}>Time: {service.createdAt}</Text>
-      <Text style={styles.text}>Final Update: {service.updatedAt}</Text>
+      <Text style={styles.text}>Service name: {service?.name}</Text>
+      <Text style={styles.text}>Price: {service?.price}</Text>
+      <Text style={styles.text}>Creator: {service?.user?.name}</Text>
+      <Text style={styles.text}>Time: {service?.createdAt}</Text>
+      <Text style={styles.text}>Final Update: {service?.updatedAt}</Text>
     </View>
   );
 };

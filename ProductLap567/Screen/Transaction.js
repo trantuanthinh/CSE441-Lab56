@@ -48,17 +48,17 @@ const Transaction = ({ navigation }) => {
           }}>
           <View style={{ left: 10, flex: 1, flexDirection: 'column' }}>
             <Text style={{ color: 'black', fontWeight: 'bold' }}>
-              {eachTransaction.id} - {formatDate(eachTransaction.updatedAt)}
-              {eachTransaction.status === 'cancelled' ? ' - cancelled' : ''}
+              {eachTransaction?.id} - {formatDate(eachTransaction?.updatedAt)}
+              {eachTransaction?.status === 'cancelled' ? ' - cancelled' : ''}
             </Text>
 
-            {eachTransaction.services.map(service => (
-              <Text style={{ color: 'black' }} key={service._id}>
-                {service.name}
+            {eachTransaction?.services?.map(service => (
+              <Text style={{ color: 'black' }} key={service?._id}>
+                {service?.name}
               </Text>
             ))}
 
-            <Text>Customer: {eachTransaction.customer.name}</Text>
+            <Text>Customer: {eachTransaction?.customer?.name}</Text>
           </View>
           <View
             style={{
@@ -67,7 +67,7 @@ const Transaction = ({ navigation }) => {
               flexDirection: 'row',
             }}>
             <Text style={{ color: 'red', fontWeight: 'bold', fontSize: 30 }}>
-              {formatCurrencyVND(eachTransaction.price)}
+              {formatCurrencyVND(eachTransaction?.price)}
             </Text>
           </View>
         </View>

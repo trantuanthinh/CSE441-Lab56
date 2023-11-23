@@ -4,6 +4,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import Customer from './Customer';
 import Home from './Home';
@@ -65,10 +66,30 @@ const Main = () => {
         style={styles.container}
         customStyles={{ backdrop: styles.backdrop }}>
         <Tab.Navigator>
-          <Tab.Screen name="Home" component={HomeStack} />
-          <Tab.Screen name="Customer" component={CustomerStack} />
-          <Tab.Screen name="Transaction" component={TransactionStack} />
-          <Tab.Screen name="Setting" component={Setting} />
+          <Tab.Screen name="Home" component={HomeStack} options={{
+            tabBarLabel: 'Home',
+            tabBarIcon: ({ color }) => (
+              <Icon name="home" color={color} size={26} />
+            ),
+          }} />
+          <Tab.Screen name="Customer" component={CustomerStack} options={{
+            tabBarLabel: 'Customer',
+            tabBarIcon: ({ color }) => (
+              <Icon name="people" color={color} size={26} />
+            ),
+          }} />
+          <Tab.Screen name="Transaction" component={TransactionStack} options={{
+            tabBarLabel: 'Transaction',
+            tabBarIcon: ({ color }) => (
+              <Icon name="cash" color={color} size={26} />
+            ),
+          }} />
+          <Tab.Screen name="Settings" component={Setting} options={{
+            tabBarLabel: 'Settings',
+            tabBarIcon: ({ color }) => (
+              <Icon name="settings" color={color} size={26} />
+            ),
+          }} />
         </Tab.Navigator>
       </MenuProvider>
     </SafeAreaProvider>
