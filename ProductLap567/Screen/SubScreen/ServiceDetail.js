@@ -13,9 +13,7 @@ import Menu, {
 const ServiceDetail = ({ navigation, route }) => {
   const id = route.params.paramKey;
   const [service, setService] = useState('');
-
   const { Popover } = renderers;
-
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -34,7 +32,7 @@ const ServiceDetail = ({ navigation, route }) => {
             },
           };
 
-          axios
+          await axios
             .get(apiURL, axiosConfig)
             .then(response => {
               setService(response.data);
@@ -47,9 +45,8 @@ const ServiceDetail = ({ navigation, route }) => {
         console.log(error);
       }
     };
-
     fetchData();
-  }, []);
+  }, [data]);
 
   const showAlert = () => {
     Alert.alert(
@@ -70,7 +67,7 @@ const ServiceDetail = ({ navigation, route }) => {
     );
   };
 
-  const handleDeleting = () => {
+  const handleDeleting = async () => {
     const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
     const token = data.token;
     console.log(token);
@@ -81,7 +78,7 @@ const ServiceDetail = ({ navigation, route }) => {
       },
     };
 
-    axios
+    await axios
       .delete(apiURL, axiosConfig)
       .then(response => {
         Alert.alert('Success:');

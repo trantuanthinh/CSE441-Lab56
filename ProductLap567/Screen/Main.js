@@ -13,8 +13,11 @@ import Transaction from './Transaction';
 
 import AddCustomer from './SubScreen/AddCustomer';
 import AddService from './SubScreen/AddService';
+import AddTransaction from './SubScreen/AddTransaction';
+import CustomerDetail from './SubScreen/CustomerDetail';
 import ServiceDetail from './SubScreen/ServiceDetail';
 import TransactionDetail from './SubScreen/TransactionDetail';
+import UpdateCustomer from './SubScreen/UpdateCustomer';
 import UpdateService from './SubScreen/UpdateService';
 
 const Stack = createStackNavigator();
@@ -40,7 +43,13 @@ const CustomerStack = () => (
       component={Customer}
       options={{ headerShown: false }}
     />
+    <Stack.Screen
+      name="CustomerDetail"
+      component={CustomerDetail}
+      options={{ headerShown: false }}
+    />
     <Stack.Screen name="AddCustomer" component={AddCustomer} />
+    <Stack.Screen name="UpdateCustomer" component={UpdateCustomer} />
   </Stack.Navigator>
 );
 
@@ -56,6 +65,7 @@ const TransactionStack = () => (
       component={TransactionDetail}
       options={{ headerShown: false }}
     />
+    <Stack.Screen name="AddTransaction" component={AddTransaction} />
   </Stack.Navigator>
 );
 
@@ -66,30 +76,46 @@ const Main = () => {
         style={styles.container}
         customStyles={{ backdrop: styles.backdrop }}>
         <Tab.Navigator>
-          <Tab.Screen name="Home" component={HomeStack} options={{
-            tabBarLabel: 'Home',
-            tabBarIcon: ({ color }) => (
-              <Icon name="home" color={color} size={26} />
-            ),
-          }} />
-          <Tab.Screen name="Customer" component={CustomerStack} options={{
-            tabBarLabel: 'Customer',
-            tabBarIcon: ({ color }) => (
-              <Icon name="people" color={color} size={26} />
-            ),
-          }} />
-          <Tab.Screen name="Transaction" component={TransactionStack} options={{
-            tabBarLabel: 'Transaction',
-            tabBarIcon: ({ color }) => (
-              <Icon name="cash" color={color} size={26} />
-            ),
-          }} />
-          <Tab.Screen name="Settings" component={Setting} options={{
-            tabBarLabel: 'Settings',
-            tabBarIcon: ({ color }) => (
-              <Icon name="settings" color={color} size={26} />
-            ),
-          }} />
+          <Tab.Screen
+            name="Home"
+            component={HomeStack}
+            options={{
+              tabBarLabel: 'Home',
+              tabBarIcon: ({ color }) => (
+                <Icon name="home" color={color} size={26} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Customer"
+            component={CustomerStack}
+            options={{
+              tabBarLabel: 'Customer',
+              tabBarIcon: ({ color }) => (
+                <Icon name="people" color={color} size={26} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Transaction"
+            component={TransactionStack}
+            options={{
+              tabBarLabel: 'Transaction',
+              tabBarIcon: ({ color }) => (
+                <Icon name="cash" color={color} size={26} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Settings"
+            component={Setting}
+            options={{
+              tabBarLabel: 'Settings',
+              tabBarIcon: ({ color }) => (
+                <Icon name="settings" color={color} size={26} />
+              ),
+            }}
+          />
         </Tab.Navigator>
       </MenuProvider>
     </SafeAreaProvider>

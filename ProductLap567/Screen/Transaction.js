@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Appbar, IconButton } from 'react-native-paper';
 
@@ -19,7 +19,7 @@ const Transaction = ({ navigation }) => {
       style: 'currency',
       currency: 'VND',
     }).format(value);
-  }
+  };
 
   const formatDate = dateString => {
     const options = {
@@ -133,7 +133,7 @@ const Transaction = ({ navigation }) => {
         icon="plus-circle-outline"
         style={styles.floatingButton}
         onPress={() => {
-          Alert.alert('Add transaction button');
+          navigation.navigate('AddTransaction');
         }}
       />
     </View>

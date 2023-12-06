@@ -3,10 +3,10 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
-const UpdateService = () => {
+const UpdateCustomer = ({ navigation, route }) => {
     const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [serviceList, setServiceList] = useState([])
+    const [phone, setPhone] = useState('');
+    const [customerList, setCustomerList] = useState([]);
 
     const [data, setData] = useState(null);
 
@@ -16,7 +16,7 @@ const UpdateService = () => {
                 const value = await AsyncStorage.getItem('data');
                 if (value !== null) {
                     setData(JSON.parse(value));
-                    const apiURL = `https://kami-backend-5rs0.onrender.com/services/`;
+                    const apiURL = `https://kami-backend-5rs0.onrender.com/Customers/`;
                     const token = JSON.parse(value).token;
                     const axiosConfig = {
                         headers: {
@@ -27,7 +27,8 @@ const UpdateService = () => {
                     await axios
                         .get(apiURL, axiosConfig)
                         .then(response => {
-                            setServiceList(response.data);
+                            console.log(response.data);
+                            setCustomerList(response.data);
                         })
                         .catch(error => {
                             console.log('Error: ', error);
@@ -40,9 +41,9 @@ const UpdateService = () => {
         fetchData();
     }, []);
 
-    const handleEditing = async (id, name, price) => {
-        const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
-        const postData = { id: id._id, name: name, price: price };
+    const handleEditing = async (id, name, phone) => {
+        const apiURL = `https://kami-backend-5rs0.onrender.com/Customers/${id}`;
+        const postData = { name: name, phone: phone };
         const token = data.token;
         const axiosConfig = {
             headers: {
@@ -63,38 +64,38 @@ const UpdateService = () => {
             });
     };
 
-    const getServiceIDByName = serviceName => {
-        for (const service of serviceList) {
-            if (service.name === serviceName) {
-                return service._id;
+    const getCustomerIDByName = customerName => {
+        for (const customer of customerList) {
+            if (customer.name === customerName) {
+                return customer._id;
             }
         }
-    }
+    };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Service Name *</Text>
+            <Text style={styles.title}>Customer Name *</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Input a service name"
                 onChangeText={text => setName(text)}
             />
-            <Text style={styles.title}>Price *</Text>
-            <TextInput style={styles.input} onChangeText={text => setPrice(text)} />
+            <Text style={styles.title}>Phone *</Text>
+            <TextInput style={styles.input} onChangeText={text => setPhone(text)} />
 
             <Button
                 style={styles.button}
                 title="Update"
                 onPress={() => {
-                    const id = getServiceIDByName(name);
-                    handleEditing(id, name, price);
+                    const id = getCustomerIDByName(name);
+                    handleEditing(id, name, phone);
                 }}
             />
         </View>
     );
-}
+};
 
-export default UpdateService;
+export default UpdateCustomer;
 
 const styles = StyleSheet.create({
     container: {
@@ -125,4 +126,3 @@ const styles = StyleSheet.create({
         backgroundColor: 'green',
     },
 });
-

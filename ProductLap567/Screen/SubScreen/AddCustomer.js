@@ -6,7 +6,6 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 const AddCustomer = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-
   const [data, setData] = useState(null);
 
   const getData = async () => {
@@ -37,7 +36,7 @@ const AddCustomer = () => {
       },
     };
 
-    axios
+    await axios
       .post(apiURL, postData, axiosConfig)
       .then(response => {
         Alert.alert('Success');

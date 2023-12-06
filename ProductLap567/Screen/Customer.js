@@ -1,56 +1,64 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Appbar, Button, IconButton } from 'react-native-paper';
 
 const Customer = ({ navigation }) => {
-  const [data, setData] = useState(null);
-  const [serviceList, setServiceList] = useState([]);
+  // const [data, setData] = useState(null);
+  const [customerList, setCustomerList] = useState([]);
 
   const keyExtractor = item => item._id.toString();
 
-  const Item = ({ eachData }) => {
+  const Item = ({ eachData, onPress }) => {
     return (
-      <View
-        style={{
-          flexDirection: 'column',
-          margin: 10,
-          flexDirection: 'row',
-        }}>
-        <View style={{ left: 10, flex: 1, flexDirection: 'column' }}>
-          <Text style={styles.text}>
-            Customer: <Text style={{ color: 'black' }}>{eachData.name}</Text>
-          </Text>
-          <Text style={styles.text}>
-            Phone: <Text style={{ color: 'black' }}>{eachData.phone}</Text>
-          </Text>
-          <Text style={styles.text}>
-            Total Money:{' '}
-            <Text style={{ color: 'red' }}>{eachData.totalSpent}₫</Text>
-          </Text>
+      <TouchableOpacity onPress={() => onPress(eachData)}>
+        <View
+          style={{
+            flexDirection: 'column',
+            margin: 10,
+            flexDirection: 'row',
+          }}>
+          <View style={{ left: 10, flex: 1, flexDirection: 'column' }}>
+            <Text style={styles.text}>
+              Customer: <Text style={{ color: 'black' }}>{eachData.name}</Text>
+            </Text>
+            <Text style={styles.text}>
+              Phone: <Text style={{ color: 'black' }}>{eachData.phone}</Text>
+            </Text>
+            <Text style={styles.text}>
+              Total Money:{' '}
+              <Text style={{ color: 'red' }}>{eachData.totalSpent}₫</Text>
+            </Text>
+          </View>
+          <View>
+            <Button icon="chess-king" title="Delete"></Button>
+            <Text
+              style={{
+                color: 'black',
+              }}>
+              Guest
+            </Text>
+          </View>
         </View>
-        <View>
-          <Button icon="chess-king" title="Delete"></Button>
-          <Text
-            style={{
-              color: 'black',
-            }}>
-            Guest
-          </Text>
-        </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
-  const renderItem = ({ item }) => <Item eachData={item} />;
+  const renderItem = ({ item }) => (
+    <Item
+      eachData={item}
+      onPress={() =>
+        navigation.navigate('CustomerDetail', { paramKey: item._id })
+      }
+    />
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const value = await AsyncStorage.getItem('data');
         if (value !== null) {
-          setData(JSON.parse(value));
 
           const apiURL = `https://kami-backend-5rs0.onrender.com/customers`;
           const token = JSON.parse(value).token;
@@ -62,10 +70,10 @@ const Customer = ({ navigation }) => {
             },
           };
 
-          axios
+          await axios
             .get(apiURL, axiosConfig)
             .then(response => {
-              setServiceList(response.data);
+              setCustomerList(response.data);
             })
             .catch(error => {
               console.log('Error: ', error);
@@ -86,7 +94,7 @@ const Customer = ({ navigation }) => {
         <Appbar.Action icon="account-circle" />
       </Appbar.Header>
       <FlatList
-        data={serviceList}
+        data={customerList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
       />

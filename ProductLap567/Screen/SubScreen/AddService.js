@@ -37,7 +37,7 @@ const AddService = () => {
       },
     };
 
-    axios
+    await axios
       .post(apiURL, postData, axiosConfig)
       .then(response => {
         Alert.alert('Success');

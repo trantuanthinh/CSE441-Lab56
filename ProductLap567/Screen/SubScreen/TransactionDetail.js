@@ -29,7 +29,6 @@ const TransactionDetail = ({ navigation, route }) => {
           setData(JSON.parse(value));
           const apiURL = `https://kami-backend-5rs0.onrender.com/transactions/${id}`;
           const token = JSON.parse(value).token;
-
           const axiosConfig = {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -37,7 +36,7 @@ const TransactionDetail = ({ navigation, route }) => {
             },
           };
 
-          axios
+          await axios
             .get(apiURL, axiosConfig)
             .then(response => {
               setTransaction(response.data);
@@ -55,41 +54,53 @@ const TransactionDetail = ({ navigation, route }) => {
     fetchData();
   }, [id]);
 
-  const showUpdatingAlert = () => {
+  const showAlert = () => {
     Alert.alert(
-      'You just clicked at the update button',
-      '** There are no updating function **',
+      'You just clicked at the "See more detail" button',
+      '** There is no function **',
     );
   };
 
   const showDeletingAlert = () => {
     Alert.alert(
-      'You just clicked at the delete button',
-      '** There are no deleting function **',
+      'Confirmation',
+      'Do you want to delete?',
+      [
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          style: 'destructive',
+          onPress: handleDeleting,
+        },
+      ],
+      { cancelable: false },
     );
   };
 
-  const handleDeleting = () => {
-    // const apiURL = `https://kami-backend-5rs0.onrender.com/services/${id}`;
-    // const token = data.token;
-    // console.log(token);
-    // const axiosConfig = {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //     'Content-Type': 'application/json',
-    //   },
-    // };
+  const handleDeleting = async () => {
+    const apiURL = `https://kami-backend-5rs0.onrender.com/transactions/${id}`;
+    const token = data.token;
+    console.log(token);
+    const axiosConfig = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
 
-    // axios
-    //   .delete(apiURL, axiosConfig)
-    //   .then(response => {
-    //     Alert.alert('Success:');
-    //     console.log('Success');
-    //   })
-    //   .catch(error => {
-    //     Alert.alert('Failed:', error);
-    //     console.log('Failed:', error);
-    //   });
+    await axios
+      .delete(apiURL, axiosConfig)
+      .then(response => {
+        Alert.alert('Success');
+        console.log('Success');
+      })
+      .catch(error => {
+        Alert.alert('Failed:', error);
+        console.log('Failed:', error);
+      });
   };
 
   const formatCurrencyVND = value => {
@@ -129,11 +140,11 @@ const TransactionDetail = ({ navigation, route }) => {
             <Button icon="dots-vertical" />
           </MenuTrigger>
           <MenuOptions style={styles.menuOptions}>
-            <MenuOption onSelect={() => showUpdatingAlert()}>
-              <Text style={styles.contentText}>Update!</Text>
+            <MenuOption onSelect={() => showAlert()}>
+              <Text style={styles.contentText}>See more detail!</Text>
             </MenuOption>
             <MenuOption onSelect={() => showDeletingAlert()}>
-              <Text style={[styles.contentText, { color: 'red' }]}>Delete!</Text>
+              <Text style={[styles.contentText, { color: 'red' }]}>Cancel!</Text>
             </MenuOption>
           </MenuOptions>
         </Menu>

@@ -9,23 +9,16 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('123');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (phone, password) => {
-
+  const handleLogin = async (phone, password) => {
     const apiURL = `https://kami-backend-5rs0.onrender.com/auth`;
     const postData = { phone: phone, password: password };
-
-    axios
+    await axios
       .post(apiURL, postData)
       .then(response => {
-        // console.log(response.data);
-        // console.log(phone);
-        // console.log(password);
         AsyncStorage.setItem('data', JSON.stringify(response.data));
         navigation.replace('Main');
       })
       .catch(error => {
-        // console.log(phone);
-        // console.log(password);
         console.log('Login failed:', error);
       });
   };
@@ -51,14 +44,12 @@ const Login = ({ navigation }) => {
         />
       </View>
 
-
       <Button
         style={styles.button}
         title="Login"
         onPress={() => handleLogin(phone, password)}>
         <Text style={styles.text}>Login</Text>
       </Button>
-
     </View>
   );
 };

@@ -7,7 +7,6 @@ import { Appbar, Button } from 'react-native-paper';
 const Home = ({ navigation }) => {
   const [data, setData] = useState(null);
   const [serviceList, setServiceList] = useState([]);
-  const [title, setTitle] = useState('');
 
 
   const keyExtractor = item => item._id.toString();
@@ -51,11 +50,10 @@ const Home = ({ navigation }) => {
             },
           };
 
-          axios
+          await axios
             .get(apiURL, axiosConfig)
             .then(response => {
               setServiceList(response.data);
-              setTitle(response.data.name)
             })
             .catch(error => {
               console.log('Error: ', error);
